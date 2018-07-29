@@ -1,0 +1,15 @@
+#!/bin/bash
+OUT=`date +%y%m%d%H`
+mkdir RESULTS/${OUT}
+for oct1 in 10
+do
+   for oct2 in `seq 16 31`
+   do
+      for oct3 in `seq 0 255`
+      do
+         nmap -sn ${oct1}.${oct2}.${oct3}.1-255 | grep "report for" | awk '{printf "%s | %s \n",$5,$6}' > RESULTS/${OUT}/${oct1}.${oct2}.${oct3}
+      #   echo nmap -sn ${oct1}.${oct2}.${oct3}.1-255 
+      done
+      find RESULTS/${OUT}/ -type f -empty -delete
+   done
+done

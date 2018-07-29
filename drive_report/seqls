@@ -1,0 +1,84 @@
+#!/usr/bin/perl -w
+#
+# yet another lseq script
+# kevin campbell
+# may 1999
+#
+# modularized and renamed by jms 10/99
+#
+# NT compatibility: kmc april 2001
+BEGIN {
+  push(@INC,($^O eq 'MSWin32')?
+	 'R:/mnt/perltk/lib/site_perl/5.005':
+	 "./PM");
+}
+use Sequence;
+if($^O eq 'MSWin32'){
+  require Win32;
+  $ENV{PWD}=Win32::GetCwd();
+}
+$|=1;
+
+
+my $prog=$1 if ($0 =~ m@([^/]*)$@);
+
+my ($nocolor)=$^O eq 'MSWin32';
+my ($sortbyage)=0;
+my ($dir);
+
+while (@ARGV) {
+    $_=shift(@ARGV);
+    if (/^-h(elp)?$/) {&usage;}
+    elsif (/^-nc/) {$nocolor=1;}
+    elsif (/^-t/)  {$sortbyage=1;}
+    elsif (!defined($dir)) {$dir=$_;}
+    else {&usage;}
+}
+$nocolor=1 if $prog =~ m/bw$/;
+$sortbyage=1 if $prog =~ m/^seqlls/;
+$dir=$ENV{PWD} unless defined($dir);
+
+#read the dir
+my (@files)=getfiles($dir);
+
+#sort
+sortfiles(\@files,$sortbyage);
+
+#print out
+printout($nocolor);
+
+exit 0;
+
+
+sub usage{
+  print <<EOD;
+Usage: $prog [-h | -help] 
+       $prog [-nc] [-t] [dir_name]
+
+  List the files in the current directory (or 'dir_name' if 
+  specified), concatenating frame ranges together.
+
+  By default, the output of $prog is coloured. The '-nc' option 
+  suppresses text colouring, which is useful when $prog is used 
+  in scripts.
+
+  Output is in ascending alphabetical order.  The '-t' option
+  causes the output to be sorted by modification time, ala
+  "ls -t".
+
+  The '-h' and '-help' options bring up this message.
+
+Example:
+
+thorn 415>ls
+b.0004   b.0006   b.0008   b.0012   b.0016   b.0020   b.0023
+b.0005   b.0007   b.0010   b.0014   b.0018   b.0022
+thorn 416>$prog
+\e[36mb.\e[32m0004-0008,0010-0022x2,0023\e[0m
+thorn 416>$prog -nc
+b.0004-0008,0010-0022x2,0023
+
+  
+EOD
+  exit 0;
+}

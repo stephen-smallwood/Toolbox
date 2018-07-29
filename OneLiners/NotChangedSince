@@ -1,0 +1,1 @@
+for name in `ls /mnt/ldn-server/`; do echo -n "${name}: "; find /mnt/ldn-server/${name} -type f -mtime -728 | wc -l ; done

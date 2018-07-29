@@ -1,0 +1,7 @@
+#
+# Seqls modified to use PM/ module which is changed to only rerurn files from the readdir
+#
+#Run
+./drive_report.pl | tee /tmp/<file>.txt
+# Tidy up
+cat /tmp/<file>.txt | sed 's/\(.*\)\./\1|/g' | sed 's|/jobs/ads/||' > /tmp/<file>_clean.txt

@@ -1,0 +1,34 @@
+#!/bin/bash
+LOCK="/root/STEVE/scripts/cache_me/lock/locked"
+CACHE_LIST="/jobs/ads/doha_film_g3_J117859/shared/cache_me"
+
+if [ -e ${LOCK} ]
+then
+   echo "Locked : exiting"
+   exit
+fi
+
+touch ${LOCK}
+
+for name in `cat ${CACHE_LIST}`
+do
+   echo -n "START : "
+   date
+
+   FILEROOT=`basename ${name}`
+   DIR=`dirname ${name}`
+
+#   echo ${FILEROOT}
+#   echo ${DIR}
+#   echo "${DIR}/${FILEROOT}"
+   SOURCE="${DIR}/${FILEROOT}.*"
+#   ls ${SOURCE}
+   for LISTITEM in `ls ${SOURCE}`
+   do
+      cat ${LISTITEM} > /dev/null
+   done
+
+   echo -n "DONE : "
+   date
+   rm -f ${LOCK}
+done
