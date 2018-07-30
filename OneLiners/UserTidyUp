@@ -1,0 +1,14 @@
+for name in `ls /mill3d/users/`; do ./vastool -u host search -q "(&(sAMAccountName=${name})(CN=*Deprovisioned*))" sAMAccountName; done >> /tmp/list.txt
+
+for name in `cat /tmp/list.txt`; do quota -i -F rpc -Q stephen | grep -v Filesystem | grep -v Disk | grep -v nero-cluster-1 | awk -v name=stephen '{printf"%s:%.2f \n", name, $1/(1024*1024)}'; done
+
+-- Steps in clearing down user directories after archive --
+
+for name in `cat users_2|awk -F/ '{print $NF}'`; do rm -frv /mill/vol3/${name}; done
+for name in `cat users_2|awk -F/ '{print $NF}'`; do cp -Rv /mill/vol3/new_user /mill/vol3/${name}; done
+for name in `cat users_2|awk -F/ '{print $NF}'`; do chown -R ${name}.games /mill/vol3/${name}; done
+for name in `cat users_2|awk -F/ '{print $NF}'`; do touch /mill/vol3/${name}/.HomeDir_reset_121012; done
+
+
+#### OTHER ####
+/opt/quest/bin/vastool -u host search "(&(sAMAccountName=*)) " distinguishedName | grep distinguishedName | grep OU=London | grep OU="Mill3D" | egrep -vi "WS[0-9]|3D-|test|user" | wc -l

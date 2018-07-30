@@ -1,1 +1,4 @@
-for name in `ls /mnt/ldn-server/`; do echo -n "${name}: "; find /mnt/ldn-server/${name} -type f -mtime -728 | wc -l ; done
+for name in `ls /mnt/<SERVER>/`; do echo -n "${name}: "; find /mnt/<SERVER>/${name} -type f -mtime -728 | wc -l ; done
+
+#Directories containing files not used for more than ....
+for NAME in `ls`; do FCOUNT=`find ${NAME} -atime -545 -mtime -545 -ctime -545 | wc -l`; if [ ${FCOUNT} -lt 1 ]; then echo ${NAME}; fi; done | tee /root/545_days.txt

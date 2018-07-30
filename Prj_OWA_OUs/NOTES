@@ -1,0 +1,9 @@
+ /opt/quest/bin/vastool -u host search "(&(sAMAccountName=*))" department sAMAccountName | ./ou_report.pl
+
+/opt/quest/bin/vastool -u host search "(&(sAMAccountName=stephen))" department targetAddress accountExpires sAMAccountName | ./ou_report.pl
+
+/opt/quest/bin/vastool -u host search "(&(sAMAccountName=*))" department targetAddress accountExpires userAccountControl lastLogonTimestamp sAMAccountName | ./ou_report.pl | grep UNUSED | grep -v DISABLED | grep -v EXPI
+
+/opt/quest/bin/vastool -u host search "(&(sAMAccountName=*))" department targetAddress accountExpires userAccountControl lastLogonTimestamp sAMAccountName | ./ou_report.pl | grep -v INACTIVE | grep -v DISABLED | grep -v EXP | wc -lq
+ 
+ RES: 13/06/17 : 438

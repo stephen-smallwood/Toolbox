@@ -1,0 +1,11 @@
+for name in `ls | awk -F _ '{print $NF}'`; do num=`echo $name | sed s/^[Jj]//`; if [ `ls /jobs/ads/ | grep ${num}` ]; then echo ${num}; fi; done > /tmp/to_move.txt
+
+for num in `cat /tmp/to_move.txt`; do src=`ls | grep ${num}`; dst=/jobs/ads/`ls /jobs/ads/ | grep ${num}`/Baselight_Archive/Ref/; mkdir -p ${dst} && rsync -rav ${src} ${dst}; done
+
+for num in `cat /tmp/to_move.txt`; do src=`ls | grep ${num}`; dst=/jobs/ads/`ls /jobs/ads/ | grep ${num}`/Baselight_Archive; if [[ -n $(find ${dst} -maxdepth 3 -name *.bljob) ]]; then echo ${src}; fi ;done > /tmp/san7_move.txt
+
+for name in `cat /tmp/san7_move.txt`; do mv -v ${name} DONE/; done | wc -l
+
+for num in `cat /tmp/to_move.txt`; do src=`ls | grep ${num}`; dst=/jobs/ads/`ls /jobs/ads/ | grep ${num}`/Baselight_Archive; if [[ -n $(find ${dst} -maxdepth 3 -name *.bljob) ]]; then echo ${dst}; fi ;done > /tmp/archive_list.txt
+
+for name in `cat /tmp/archive_list.txt`; do dirname ${name}; done > /tmp/archive_list1.txt

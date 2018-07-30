@@ -1,0 +1,54 @@
+#!/usr/bin/perl
+#
+use Data::Dumper qw(Dumper);
+
+#Pull in info from ldap query
+#
+while (<>) 
+{
+   if ($_ =~ /dn/)
+      {
+         $dn = $sam = "";
+         $dn = $_;
+         $dn =~ s/dn: //;
+
+	 $dpt = "NULL";
+      }
+   elsif($_ =~ /department/)
+      {
+         $dpt = $_;
+	 chomp($dpt);
+         $dpt =~ s/department: //;
+      }
+   elsif($_ =~ /sAMAccountName/ && $dpt !~ /NULL/)
+      {
+         $sam = $_;
+	 $sam =~ s/sAMAccountName: //;
+	 chomp($sam);
+
+         $dn =~ s/OU=|DC=|CN=//g;
+
+         @bits = split /,/,$dn;
+	 $num = @bits;
+	 $location = $bits[$num-4];
+	 $name = $bits[0];
+
+        if ($location =~ /London/)
+	    {
+               $dpt_list{$dpt}=1;
+	       push (@$dpt, "$name|$sam"); 
+	    }
+      }
+}
+@dpt_names = keys %dpt_list;
+foreach $dpt_n (@dpt_names)
+   {
+      if(@$dpt_n && $dpt_n !~ /@$dpt_n[0]/)
+         {
+#            print "$dpt_n: ".scalar @$dpt_n." \n";
+            foreach $name (@$dpt_n)
+	       {
+                  print "$dpt_n|$name \n";
+	       }
+	 }
+   }
